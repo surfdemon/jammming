@@ -1,0 +1,6 @@
+.TrackList{
+    /* float: left; */
+    background-color: blue;
+    grid-area: tracklist;
+    padding: 20px;
+}

@@ -1,0 +1,6 @@
+.SearchBar{ 
+    background-color: orange;
+    grid-area: searchbar;
+    align-items: center;
+    display: grid;
+}

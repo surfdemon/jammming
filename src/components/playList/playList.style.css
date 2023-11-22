@@ -1,0 +1,6 @@
+.PlayList{
+    /*float:right;*/
+    background-color: green;
+    grid-area: playlist;
+    padding: 20px;
+}
