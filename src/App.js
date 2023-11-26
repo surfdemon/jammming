@@ -68,10 +68,19 @@ function App() {
     setPlaylist(oldPlayList => { return oldPlayList.filter(tracks => tracks.id !== id)});
   };
 
+  const addTrackToPlayList = (id) => { 
+    //Get track object from track list
+    const track = tracks.find(track => {return track.id === id});
+    //Remove from track list 
+    removeFromTrackList(id);
+    //Add to play list 
+    setPlaylist(oldPlayList => [...oldPlayList, track]);
+  };
+
   return (
     <div className="App">
         <SearchBar />
-        <TrackList tracklist={tracks} trackListRemove={removeFromTrackList}/>
+        <TrackList tracklist={tracks} trackListRemove={removeFromTrackList} addTrackToPlayList={addTrackToPlayList}/>
         <PlayList playlist={playlist} playListRemove={removeFromPlayList}/>
     </div>
   );
