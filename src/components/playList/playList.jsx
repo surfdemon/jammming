@@ -1,17 +1,26 @@
 import React, { useState } from 'react'
 import './playList.style.css';
 import TrackItem from '../trackItem/trackItem';
+import { useSelector, useDispatch } from'react-redux';
+import { addTrack, removeTrack, changePlaylistName } from '../../store/playlistSlice';
 
-function PlayList(props) {
-    const {playlist, playListRemove} = props;
-    console.log('the tracks in the playlist are');
-    console.log(playlist);
+
+function PlayList() {
+    const { playlist, playlistName } =  useSelector(state => state.playlist);
+
+    const dispatch = useDispatch();
+
     const saveToSpotifyButtonClick = () => {};
-    
+     
     return (
         <div className="PlayList">
+              <input id='playListName' value={playlistName} placeholder='Enter playlist name' onChange={(e) => dispatch(changePlaylistName(e.target.value))} />      
               {playlist.map((track) => { 
-                return <TrackItem artist={track.artistName} song={track.trackName} key={track.id} album={track.album} id={track.id} removeTrackClick={playListRemove}/>
+                return <TrackItem 
+                  track={track} 
+                  key={track.id} 
+                  listType = "playlist"
+                />
             })}
             <br></br>
               <button onClick={saveToSpotifyButtonClick}>Save to Spotify</button>
@@ -19,4 +28,4 @@ function PlayList(props) {
     )
 }
 
-export default PlayList
+export default PlayList;

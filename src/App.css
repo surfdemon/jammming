@@ -2,6 +2,9 @@
   box-sizing: border-box;
 }
 
+.SpotifyLoginLogout{
+  grid-area: spotifyLoginLogout;
+}
 .App {
   text-align: center;
   display: grid; 
@@ -10,7 +13,8 @@
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(7, minmax(100px, auto));
   grid-gap: 10px;
-  grid-template-areas: "searchbar searchbar"
+  grid-template-areas:  "spotifyLoginLogout spotifyLoginLogout"
+                        "searchbar searchbar"
                         "tracklist playlist"
                         "tracklist playlist"
                         "tracklist playlist";
