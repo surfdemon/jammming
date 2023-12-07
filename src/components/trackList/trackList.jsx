@@ -1,24 +1,23 @@
 import React from 'react'
 import './trackList.style.css';
 import TrackItem from '../trackItem/trackItem';
+import { useSelector, useDispatch } from'react-redux';
 
-function TrackList(props){
-    const {tracklist, trackListRemove, addTrackToPlayList} = props;
-    console.log('tracks in the trackslist are ');
-    console.log(tracklist);
 
+function TrackList(){
+    const { tracklist } =  useSelector(state => state.tracklist);
+    const dispatch = useDispatch();
+
+    
     return (
         <div className="TrackList">
             {tracklist.map((track) => { 
                 return <TrackItem 
-                    artist={track.artistName} 
-                    song={track.trackName} 
+                    track={track}
                     key={track.id} 
-                    album={track.album} 
-                    id={track.id} 
-                    removeTrackClick={trackListRemove} 
-                    addButton="yes" 
-                    addTrackToPlayList={addTrackToPlayList}/>
+                    addTrackToPlaylist = "yes"
+                    listType = "tracklist"
+                />
             })}
         </div>
     )
