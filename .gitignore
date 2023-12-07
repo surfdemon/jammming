@@ -1,6 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-/src/spotify-api/spotify-keys.js
+/src/spotify-api/secret-keys.js
 
 # dependencies
 /node_modules
