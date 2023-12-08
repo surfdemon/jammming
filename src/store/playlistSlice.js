@@ -34,7 +34,7 @@ const playlistSlice = createSlice({
   reducers: {
     addTrack: (state, action) => {
       state.playlist.push({
-        id: state.playlist.length + 1,
+        id: action.payload.id,
         artistName: action.payload.artistName,
         trackName: action.payload.trackName,
         album: action.payload.album

@@ -27,7 +27,7 @@ const tracklistSlice = createSlice({
   reducers: {
     addTrack: (state, action) => {
       state.tracklist.push({
-        id: state.tracklist.length + 1,
+        id: action.payload.id,
         artistName: action.payload.artistName,
         trackName: action.payload.trackName,
         album: action.payload.album
