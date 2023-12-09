@@ -4,32 +4,7 @@ const playlistSlice = createSlice({
   name: 'playlist',
   initialState: {
     playlistName: '',
-    playlist: [
-      {
-        id: 5,
-        artistName: 'Europe',
-        trackName: 'The Final Countdown',
-        album: 'Europe'
-      },
-      {
-        id: 6,
-        artistName: 'Survivor',
-        trackName: 'Eye of the Tiger',
-        album: 'Survivor'
-      },
-      {
-        id: 7,
-        artistName: 'Bon Jovi',
-        trackName: 'These Days',
-        album: 'These Days'
-      },
-      {
-        id: 8,
-        artistName: 'Gary Moore',
-        trackName: 'Still Got the Blues',
-        album: 'Still got the blues'
-      },
-    ]
+    playlist: []
   },
   reducers: {
     addTrack: (state, action) => {

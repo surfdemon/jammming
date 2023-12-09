@@ -13,41 +13,50 @@ function SearchBar() {
 
     const getResults = async (token) => {
         try { 
-            console.log(searchText);
-            console.log(token);
             const response = await fetch(`https://api.spotify.com/v1/search?q=${searchText}&type=track&market=GB&limit=5&offset=0&access_token=${token}`);
             const data = response.json();
             return data;
         } catch (error) {
-            console.log(error);
+            console.log(error);               
         }
     }    
 
     const onSearchButtonClick = (e) => {
-        console.log('Search button clicked');
-        console.log(e);
-
         let token = window.localStorage.getItem("token");
+        // try to get token from local storage, if there is one the user  has logged in before. 
+        // For now lets be naughty and assume that their login is still valid.
         if (token) {
+            // If there is a token then it looks like the user in logged in
+            // So carry on and try and get the search results
             getResults(token).then((data) => {
-                const foundTracks = data['tracks']['items'];
-                foundTracks.forEach(track => {
-                    const newTrack = {
-                        id: track.id,
-                        trackName: track.name,
-                        artistName: track.artists[0].name,
-                        albumName: track.album.name,
-                     }
-                    
-                    console.log(newTrack);
-                    dispatch(addTrack(newTrack));
+                // When the search results come back try to process them
+                try {
+                    if(typeof data['tracks'] === undefined){
+                        // If data['tracks'] is undefined then it means the search returned no results. 
+                        console.log("No token, user needs to login");
+                    } else {
+                        const foundTracks = data['tracks']['items'];
+                        foundTracks.forEach(track => {
+                            //Build a new track object to add to the track list
+                            console.log(track);
+                            const newTrack = {
+                                id: track.uri,
+                                trackName: track.name,
+                                artistName: track.artists[0].name,
+                                albumName: track.album.name,
+                            }
+                            dispatch(addTrack(newTrack));
+                        });
+                    } 
+                    } catch (error) {
+                        // The token is not valid, remove token and reload the page
+                        // to force the user to login again.
+                        window.localStorage.removeItem("token");
+                        window.location.reload();
+                    }
                 });
-                console.log(data['tracks']['items']);
-            });
-        } else {
-            console.log("No token");
         }
-    };
+    }
 
     return (
         <div className="SearchBar">

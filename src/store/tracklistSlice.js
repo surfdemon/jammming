@@ -3,26 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const tracklistSlice = createSlice({
   name: 'tracklist',
   initialState: {
-    tracklist: [
-        {
-            id: 1,
-            artistName: 'Dire Straits',
-            trackName: 'Sultans of Swing', 
-            album: 'The very best of Dire Straits'
-          },
-          {
-            id: 2,
-            artistName: 'Savage Garden',
-            trackName: 'Truly Madly Deeply',  
-            album: 'Truly Madly Deeply'
-          },
-          {
-            id: 3,
-            artistName: 'The Eagles',
-            trackName: 'Hotel California',  
-            album: 'Hotel California'
-          },
-    ]
+    tracklist: []
   },
   reducers: {
     addTrack: (state, action) => {
@@ -40,6 +21,4 @@ const tracklistSlice = createSlice({
 })
 
 export const { addTrack, removeTrackFromTracklist, addTrackToPlaylist } = tracklistSlice.actions;
-
 export default tracklistSlice.reducer;
-
