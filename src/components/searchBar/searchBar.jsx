@@ -35,12 +35,10 @@ function SearchBar() {
                         // If data['tracks'] is undefined then it means the search returned no results. 
                         window.localStorage.removeItem("token");
                         window.location.reload();
-                        console.log("No token, user needs to login");
                     } else {
                         const foundTracks = data['tracks']['items'];
                         foundTracks.forEach(track => {
                             //Build a new track object to add to the track list
-                            console.log(track);
                             const newTrack = {
                                 id: track.uri,
                                 trackName: track.name,

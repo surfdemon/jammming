@@ -21,7 +21,6 @@ function PlayList() {
 
       const usersResponse = await fetch('https://api.spotify.com/v1/me', userOptions);
       const usersData = usersResponse.json();
-      console.log(usersData);
       return usersData;
     }
 
@@ -84,9 +83,7 @@ function PlayList() {
           const playlistID = data.id;
           const playlistTracksUris = getListOfTracksUris();
 
-          addTracksToPlaylistInSpotify(token, playlistID, playlistTracksUris).then((data) => {
-            console.log(data);
-          });
+          addTracksToPlaylistInSpotify(token, playlistID, playlistTracksUris);
 
         });
 

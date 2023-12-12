@@ -6,37 +6,12 @@ import TrackList from './components/trackList/trackList';
 import spotifyKeys from './spotify-api/secret-keys.js';
 import { useDispatch, useSelector } from'react-redux';
 import { Buffer } from 'buffer';
-import axios from 'axios';
 
 function App() {
-  //UseState for tracks in tracks list 
-  // const { playlist } =  useSelector(state => state.playlist);
- 
-  //const [verifier, setVerifier] = useState("");
-
-  // useEffect(() => {
-  //   const hash = window.location.hash;
-  //   let token = window.localStorage.getItem("token");
-  //   console.log(hash);
-  //   if (!token && hash) {
-  //     token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token")).split("=")[1];
-  //     window.location.hash = "";
-  //     window.localStorage.setItem("token", token);
-  //     setToken(token);
-  //   }
-
-  //   if (token) {
-  //     setToken(token);
-  //   }
-  // }, []);
-
-
   const [token, setToken] = useState("");
   useEffect(() => {
-    
     const hash = window.location.hash;
     let tokenStorage = window.localStorage.getItem("token");
-    console.log(hash);
     if (!tokenStorage && hash) {
       tokenStorage = hash.substring(1).split("&").find(elem => elem.startsWith("access_token")).split("=")[1];
       window.location.hash = "";
@@ -51,7 +26,6 @@ function App() {
     const code = params.get("code"); 
   
     const getAccessToken = async (clientID, code) => {
-      console.log(`######################## getAccessToken is running ########################`);
       const verifier = localStorage.getItem("verifier");
       const params = new URLSearchParams();
       params.append("client_id", clientID);
@@ -129,17 +103,18 @@ function App() {
   const logOut = () => {
     window.localStorage.removeItem("verifier");
     window.localStorage.removeItem("token");
+    window.hash = "";
+    window.location = 'http://localhost:3000/';
   };
 
   const verifier = localStorage.getItem("verifier");
   const tokenStorage = localStorage.getItem("token");
 
-// <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login to Spotify</a> 
-//{!verifier ? <button onClick={() => redirectToAuthCodeFlow(clientID)} >Login to Spotify</button> : <button onClick={logOut} >Log Out</button>}
   return (
     <div className="App">
         <div className='SpotifyLoginLogout'>
-          
+          {verifier ? <button onClick={logOut} >Log Out</button> : ""}
+
         </div>
         {!verifier && !token ? <h1>Redirecting to Login</h1> : 
           <>
