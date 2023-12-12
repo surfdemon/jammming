@@ -5,49 +5,143 @@ import PlayList from './components/playList/playList';
 import TrackList from './components/trackList/trackList';
 import spotifyKeys from './spotify-api/secret-keys.js';
 import { useDispatch, useSelector } from'react-redux';
-
+import { Buffer } from 'buffer';
+import axios from 'axios';
 
 function App() {
   //UseState for tracks in tracks list 
-  //const { playlist } =  useSelector(state => state.playlist);
+  // const { playlist } =  useSelector(state => state.playlist);
  
+  //const [verifier, setVerifier] = useState("");
+
+  // useEffect(() => {
+  //   const hash = window.location.hash;
+  //   let token = window.localStorage.getItem("token");
+  //   console.log(hash);
+  //   if (!token && hash) {
+  //     token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token")).split("=")[1];
+  //     window.location.hash = "";
+  //     window.localStorage.setItem("token", token);
+  //     setToken(token);
+  //   }
+
+  //   if (token) {
+  //     setToken(token);
+  //   }
+  // }, []);
+
+
   const [token, setToken] = useState("");
   useEffect(() => {
+    
     const hash = window.location.hash;
-    let token = window.localStorage.getItem("token");
+    let tokenStorage = window.localStorage.getItem("token");
     console.log(hash);
-    if (!token && hash) {
-      token = hash.substring(1).split("&").find(elem => elem.startsWith("access_token")).split("=")[1];
+    if (!tokenStorage && hash) {
+      tokenStorage = hash.substring(1).split("&").find(elem => elem.startsWith("access_token")).split("=")[1];
       window.location.hash = "";
-      window.localStorage.setItem("token", token);
-      setToken(token);
+      window.localStorage.setItem("token", tokenStorage);
+      setToken(tokenStorage);
+    }
+    const REDIRECT_URI = 'http://localhost:3000/';
+    const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
+    const clientID = spotifyKeys.clientID;
+    const client_secret = spotifyKeys.clientSecret;  
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code"); 
+  
+    const getAccessToken = async (clientID, code) => {
+      console.log(`######################## getAccessToken is running ########################`);
+      const verifier = localStorage.getItem("verifier");
+      const params = new URLSearchParams();
+      params.append("client_id", clientID);
+      params.append("grant_type", "authorization_code");
+      params.append("code", code);
+      params.append("redirect_uri", REDIRECT_URI);
+      params.append("code_verifier", verifier);
+      const result = await fetch(`https://accounts.spotify.com/api/token`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          'Authorization': 'Basic ' + (new Buffer.from(clientID + ':' + client_secret).toString('base64'))
+        },
+        body: params  
+      });
+      const { access_token } = await result.json();
+      if (typeof access_token !== typeof undefined) {
+        return access_token;
+      }
+    }
+  
+    const generateCodeVerifier = (length) => {
+      let text = "";
+      let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+      for (let i = 0; i < length; i++) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+      }
+      return text;
+    }
+  
+    const generateCodeChallenge = async (codeVerifier) => {
+      const data = new TextEncoder("utf-8").encode(codeVerifier);
+      const digest = await window.crypto.subtle.digest("SHA-256", data);
+      return btoa(String.fromCharCode.apply(null, [...new Uint8Array(digest)]))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=/g, "");
+    }
+  
+    const redirectToAuthCodeFlow = async (clientID) => {
+      const verifier = generateCodeVerifier(128); 
+      const challenge = await generateCodeChallenge(verifier);
+      localStorage.setItem("verifier", verifier);
+      const params = new URLSearchParams();
+      params.append("client_id", clientID);
+      params.append("response_type", "code");
+      params.append("redirect_uri", REDIRECT_URI);
+      params.append("scope", "user-read-private user-read-email playlist-read-private playlist-read-collaborative playlist-modify-private playlist-modify");
+      params.append("code_challenge_method", "S256");
+      params.append("code_challenge", challenge);
+      window.location.href = `${AUTH_ENDPOINT}?${params.toString()}`;
+      
+
+    }
+  
+    const getToken = async (clientID, code) => {
+      const accessToken = await getAccessToken(clientID, code);
+      if (accessToken !== undefined){
+        localStorage.setItem("token", accessToken); 
+      }
+    }
+  
+    const token = localStorage.getItem("token");
+
+    if ( !code ){
+      redirectToAuthCodeFlow(clientID);
     }
 
-    if (token) {
-      setToken(token);
+    if ( !token ){
+        getToken(clientID, code);
     }
+  
   }, []);
 
   const logOut = () => {
+    window.localStorage.removeItem("verifier");
     window.localStorage.removeItem("token");
-    setToken("");
   };
 
-  const CLIENT_ID = spotifyKeys.clientID;
-  const REDIRECT_URI = 'http://localhost:3000/';
-  const RESPONSE_TYPE = 'token';
-  const AUTH_ENDPOINT = 'https://accounts.spotify.com/authorize';
+  const verifier = localStorage.getItem("verifier");
+  const tokenStorage = localStorage.getItem("token");
 
-
-
-
-
+// <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login to Spotify</a> 
+//{!verifier ? <button onClick={() => redirectToAuthCodeFlow(clientID)} >Login to Spotify</button> : <button onClick={logOut} >Log Out</button>}
   return (
     <div className="App">
         <div className='SpotifyLoginLogout'>
-          {!token ? <a href={`${AUTH_ENDPOINT}?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=${RESPONSE_TYPE}`}>Login to Spotify</a> : <button onClick={logOut} >Log Out</button>}
+          
         </div>
-        {!token ? <h1>Please Login</h1> : 
+        {!verifier && !token ? <h1>Redirecting to Login</h1> : 
           <>
             <SearchBar />
             <TrackList/>

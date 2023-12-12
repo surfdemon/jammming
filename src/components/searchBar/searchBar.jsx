@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import './searchBar.style.css';
 import { addTrack } from '../../store/tracklistSlice';
-import { useSelector, useDispatch } from'react-redux';
+import { useDispatch } from'react-redux';
 
 function SearchBar() {
     const [ searchText, setSearchText ] = useState('');
@@ -31,8 +31,10 @@ function SearchBar() {
             getResults(token).then((data) => {
                 // When the search results come back try to process them
                 try {
-                    if(typeof data['tracks'] === undefined){
+                    if(typeof data['tracks'] ===  typeof undefined){
                         // If data['tracks'] is undefined then it means the search returned no results. 
+                        window.localStorage.removeItem("token");
+                        window.location.reload();
                         console.log("No token, user needs to login");
                     } else {
                         const foundTracks = data['tracks']['items'];

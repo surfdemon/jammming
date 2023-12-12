@@ -1,7 +1,7 @@
 import React from 'react';
 import { removeTrackFromTracklist } from '../../store/tracklistSlice';
 import { addTrack, removeTrackFromPlaylist } from '../../store/playlistSlice';
-import { useSelector, useDispatch } from'react-redux';
+import { useDispatch } from'react-redux';
 
 function TrackItem(props) {
     const { track, listType } = props;
